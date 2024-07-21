@@ -1,51 +1,52 @@
 import pickle
 import streamlit as st
 
-# membaca model
+# Membaca model
 diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
 
-#judul web
+# Judul web
 st.title('Prediksi Diabetes')
 
-#membagi kolom
+# Membagi kolom
 col1, col2 = st.columns(2)
 
-with col1 :
-    Pregnancies = st.text_input ('input Pregnancies')
+with col1:
+    Pregnancies = st.text_input('Input Pregnancies')
+    Glucose = st.text_input('Input Glucose')
+    BloodPressure = st.text_input('Input BloodPressure')
+    SkinThickness = st.text_input('Input SkinThickness')
+    Insulin = st.text_input('Input Insulin')
+    
+with col2:
+    BMI = st.text_input('Input BMI')
+    DiabetesPedigreeFunction = st.text_input('Input DiabetesPedigreeFunction')
+    Age = st.text_input('Input Age')
 
-with col2 :
-    Glucose = st.text_input ('input Glucose')
-
-with col1 :
-    BloodPressure = st.text_input ('input BloodPressure')
-
-with col2 :
-    SkinThickness = st.text_input ('input SkinThickness')
-
-with col1 :
-    Insulin = st.text_input ('input Insulin')
-
-with col2 :
-    BMI = st.text_input ('input BMI')
-
-with col1 :
-    DiabetesPedigreeFunction = st.text_input ('input DiabetesPedigreeFunction')
-
-with col2 :
-    Age = st.text_input ('input Age')
-
-
-# code untuk prediksi
-diabetes_pred = ''
-
-# membuat tombol untuk prediksi
+# Code untuk prediksi
 if st.button('Test Prediksi Diabetes'):
-    diabetes_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
+    try:
+        # Konversi input menjadi float
+        Pregnancies = float(Pregnancies)
+        Glucose = float(Glucose)
+        BloodPressure = float(BloodPressure)
+        SkinThickness = float(SkinThickness)
+        Insulin = float(Insulin)
+        BMI = float(BMI)
+        DiabetesPedigreeFunction = float(DiabetesPedigreeFunction)
+        Age = float(Age)
 
-   if upitrans_pred == '0':
-    return "Tidak Diabetes"
-elif upitrans_pred == '1':
-    return "Diabetes"
-else:
-    return None
-st.success(diabetes_pred)
+        # Prediksi menggunakan model
+        diabetes_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
+
+        # Menampilkan hasil prediksi
+        if diabetes_prediction[0] == 0:
+            st.success("Tidak Diabetes")
+        elif diabetes_prediction[0] == 1:
+            st.success("Diabetes")
+        else:
+            st.warning("Status Prediksi Tidak Diketahui")
+    
+    except ValueError:
+        st.error('Semua input harus berupa angka.')
+    except Exception as e:
+        st.error(f'Error: {e}')
